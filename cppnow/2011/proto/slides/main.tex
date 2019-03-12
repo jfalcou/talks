@@ -1,0 +1,79 @@
+\documentclass[color=option]{beamer}
+
+\mode<presentation>
+\usepackage[english,french]{babel} 
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times} 
+\usepackage{multimedia,pgf,xmpmulti,listings}
+\usepackage{amsmath,amssymb,latexsym}
+\usetheme{progressbar}
+
+\definecolor{orangeish}{rgb}{1,0.45,0}
+\definecolor{ForestGreen}{rgb}{.25,0.45,0.25}
+
+\progressbaroptions{headline=sections,frametitle=normal,titlepage=normal}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title[Boost'Con 2011]{Getting Jiggy with Proto\\
+Hands-on Tutorial on C++ EDSL Design}
+\author{Joel Falcou}
+\institute{LRI, University Paris Sud XI}
+\date{05/17/2011}
+
+\begin{document}
+\frame{\titlepage}
+\selectlanguage{english}
+
+\frame
+{
+  \frametitle{Why a Proto Hands on ?}
+  \begin{block}{Proto is impressive}<1->
+  \footnotesize
+  \begin{itemize}
+  \footnotesize
+  \item EDSL are not easy to grasp
+  \item Proto helps but is full of gotcha
+  \item Few (like 10 ?) peoples are actually up to the details
+  \end{itemize}
+  \end{block}
+
+  \begin{block}{Our goals}<2->
+  \footnotesize
+  \begin{itemize}
+  \footnotesize
+  \item Take a slow trip to Proto usage
+  \item Go further than the simple example to see the width of it
+  \item Go home with something to think about
+  \end{itemize}
+  \end{block}
+}
+
+\frame
+{
+  \frametitle{Why a Proto Hands on ?}
+  \begin{block}{Schedule}<1->
+  \footnotesize
+  \begin{itemize}
+  \footnotesize
+  \item Introduction to Proto Basic : analytical functions
+  \item First hand-on : evaluation of functions
+  \item Second Hand-on : analytical derivative and partial derivative
+  \end{itemize}
+  \end{block}
+
+  \begin{block}{How will it work ?}<2->
+  \footnotesize
+  \begin{itemize}
+  \footnotesize
+  \item Fetch the source from http://tinyurl.com/proto-hands-on
+  \item Get the latest boost release or trunk
+  \item Get a compiler (duh)
+  \item Opens the introduction/ folder files and let's start !
+  \end{itemize}
+  \end{block}
+}
+
+\end{document}

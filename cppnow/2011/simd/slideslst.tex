@@ -1,0 +1,247 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SSE2/Altivec
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstsse{%
+\begin{lstlisting}
+__m128i a, b, c, result;
+result = _mm_mul_epi32(a, _mm_add_epi32(b, c));
+\end{lstlisting}}
+
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstvmx{%
+\begin{lstlisting}
+__vector int a, b, c, result;
+result = vec_cts(vec_madd( vec_ctf(a,0)
+                         , vec_ctf(b,0)
+                         , vec_ctf(c,0)
+                         )
+                 ,0);
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Allcoator
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstallocator{%
+\begin{lstlisting}
+std::vector<float, simd::allocator<float> > v(173);
+
+assert( simd::is_aligned(&v[0]) );
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SIMD range interface
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lststlrange{%
+\begin{lstlisting}
+std::vector<float, simd::allocator<float> > v(1024);
+pack<float> x,z;
+
+x = std::accumulate( simd::begin(v.begin())
+                   , simd::end(v.end())
+                   , z 
+                   );
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SIMD range interface
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lststlrangeb{%
+\begin{lstlisting}
+std::vector<float, simd::allocator<float> > v(1024);
+pack<float> x,z;
+
+x = boost::accumulate(simd::range(v), z);
+\end{lstlisting}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Native/pack range interface
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstpackrange{%
+\begin{lstlisting}
+pack<float> x(1,2,3,4);
+
+float k = std::accumulate(x.begin(), x.end(), 0.f);
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SIMD range interface
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstranges{%
+\begin{lstlisting}
+std::vector<float, simd::allocator<float> > v(1024);
+pack<float> x,z;
+float r;
+
+x = boost::accumulate(simd::range(v), z);
+r = std::accumulate(x.begin(), x.end(), 0.f);
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SIMD range interface
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstrangesb{%
+\begin{lstlisting}
+std::vector<float, simd::allocator<float> > v(1024);
+float r;
+
+r = sum(accumulate(simd::range(v),pack<float>()));
+\end{lstlisting}}
+
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstrgb{%
+\begin{lstlisting}
+float const *red, *green, *blue;
+float* result;
+ 
+for(std::size_t i = 0; i != height*width; ++i)
+    result[i] = 0.3f * red[i] + 0.59f * green[i] + 0.11f * blue[i]; 
+\end{lstlisting}}
+
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstrgbsimd{%
+\begin{lstlisting}
+std::size_t N = meta::cardinal_of<pack<float>>::value;
+for(std::size_t i = 0; i != height*width/N; ++i)
+{
+   pack<float> r = load< pack<float> >(red, i);
+   pack<float> g = load< pack<float> >(green, i);
+   pack<float> b = load< pack<float> >(blue, i);
+		
+   pack<float> res = 0.3f * r + 0.59f * g + 0.11f * b;
+   store(res, result, i);
+}
+\end{lstlisting}}
+
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstbitsrgb{%
+\begin{lstlisting}
+static const std::size_t N = meta::cardinal_of< pack<uint8_t> >::value;
+for(std::size_t i = 0; i != height*width/N; ++i)
+{
+  pack<uint8_t> r = load< pack<uint8_t> >(red, i);
+  pack<uint8_t> g = load< pack<uint8_t> >(green, i);
+  pack<uint8_t> b = load< pack<uint8_t> >(blue, i);
+		
+  pack<uint8_t> res = uint8_t(77) * r / uint8_t(255) + uint8_t(150) 
+                    * g / uint8_t(255) + uint8_t(28) * b / uint8_t(255);
+  store(res, result, i);
+}
+\end{lstlisting}}
+
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstpromotergb{%
+\begin{lstlisting}
+uint16_t r_coeff = 77;
+uint16_t g_coeff = 150;
+uint16_t b_coeff = 28;
+uint16_t div_coeff = 255;
+
+pack<uint16_t> r1, r2, g1, g2, b1, b2;
+tie(r1, r2) = split(r);
+tie(g1, g2) = split(g);
+tie(b1, b2) = split(b);
+	
+pack<uint16_t> res1 = (r_coeff * r1+ g_coeff * g1 + b_coeff * b1) / div_coeff;
+pack<uint16_t> res2 = (r_coeff * r2+ g_coeff * g2 + b_coeff * b2) / div_coeff;
+pack<uint8_t> res = group(res1, res2);
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SIMD range interface
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstrangergb{%
+\begin{lstlisting}
+template<class RangeIn, class RangeOut> inline void
+rgb2grey( RangeOut result, RangeIn red, RangeIn green, RangeIn blue )
+{
+  typedef typename RangeIn::iterator  in_iterator;
+  typedef typename RangeOut::iterator iterator;
+  typedef typename iterator_value<iterator>::type type;
+
+  iterator br = result.begin(), er = result.end();
+  in_iterator r = red.begin();
+  in_iterator g = green.begin();
+  in_iterator b = blue.begin();
+
+  while( br != er )
+  {
+    type rv = load< type >(r, 0);
+    type gv = load< type >(g, 0);
+    type bv = load< type >(b, 0);
+    type res = 0.3f * rv + 0.59f * gv + 0.11f * bv;
+    store(res, br, 0);
+    br++; r++; g++; b++;
+  }
+}
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% SIMD bool
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstsimdbool{%
+\begin{lstlisting}
+pack<float> x(1,2,3,4);
+pack<float> c(2.5);
+
+cout << lt(x,c) << endl;
+\end{lstlisting}}
+
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstsimdboolresult{%
+\begin{lstlisting}
+(( Nan Nan 0  0))
+\end{lstlisting}}
+
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstsimdboolvalue{%
+\begin{lstlisting}
+True<T>() which returns a proper true value w/r to T
+False<T>() which returns a proper false value w/r to T
+\end{lstlisting}}
+
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstsimdwhere{%
+\begin{lstlisting}
+// Scalar code
+if( x > 4 )
+  y = 2*x;
+else
+  z = 1.f/x
+
+// SIMD code
+// ???
+\end{lstlisting}}
+
+\lstset{basicstyle=\footnotesize\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstsimdwheredone{%
+\begin{lstlisting}
+// Scalar code
+if( x > 4 )
+  y = 2*x;
+else
+  z = 1.f/x
+
+// SIMD code
+y = where( gt(x, 4), 2*x, y);
+z = where( gt(x, 4), z, 1.f/x);
+\end{lstlisting}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SIMD filtering
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstfilter{%
+\begin{lstlisting}
+template<class RangeIn, class RangeOut> 
+inline void average( RangeOut result, RangeIn input )
+{
+  typedef typename RangeIn::iterator  in_iterator;
+  typedef typename RangeOut::iterator iterator;
+  typedef typename iterator_value<iterator>::type type;
+
+  iterator br = result.begin(), er = result.end();
+  in_iterator data = input.begin();
+
+  br++; er--;
+  while( br != er )
+  {
+    type xm1 = load<type, -1>(data,i);
+    type x      = load<type>(data,i);
+    type xp1  = load<type, +1>(data,i);
+ 
+    store(res,i,0) = 1.f/3 * (xm1 + x + xp1);
+  }
+}
+\end{lstlisting}}

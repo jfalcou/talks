@@ -1,0 +1,121 @@
+
+\section{Introduction}
+
+\subsection{Context}
+\frame
+{
+  \frametitle{Context}
+  \begin{block}{From $NT^2$ to Boost.SIMD}
+  \begin{itemize}
+  \footnotesize
+  \item Last year, we presented $NT^2$, a \textsc{Matlab}-like Proto-based library
+		      for high-performance numerical computation
+  \item Boost.SIMD is the extraction of the SIMD subcomponent of the
+		      library
+   \item A GSoC project is scheduled this summer to help make it ready for review 
+  \item This talk is here to present what's inside the proposal.
+  \end{itemize}
+  \end{block}{}
+}
+
+\subsection{SIMD}
+\frame
+{
+  \frametitle{What's SIMD?}
+  \begin{columns}[c] 
+  \begin{column}{6cm} 
+  \pgfuseimage{simd-schema}
+  \end{column} 
+  \begin{column}{4cm} 
+  \begin{block}{Principles}
+   \footnotesize
+	\begin{itemize}
+		\item Single Instruction, Multiple Data
+		\item Operations applied on NxT elements within a single register
+		\item Up to N times faster than regular ALU/FPU
+	\end{itemize}
+  \end{block}{}	
+  \end{column} 
+  \end{columns} 
+}
+
+\subsection{SIMD abstraction}
+\frame
+{
+\frametitle{Why is SIMD abstraction needed?}
+
+  \begin{columns}[c] 
+  \begin{column}{5cm} 
+  \begin{block}{x86 family}
+   \begin{itemize} \footnotesize
+			\item MMX 64-bit float, double
+			\item SSE 128-bit float
+			\item SSE2 128-bit int8, int16, int32, int64, double
+			\item SSE3
+			\item SSSE3
+			\item SSE4a (AMD only)
+			\item SSE4.1
+			\item SSE4.2
+			\item AVX 256-bit float, double
+			\item FMA4 (AMD only)
+			\item XOP (AMD only)
+			\item FMA3
+		\end{itemize}
+\end{block}{}
+
+  \end{column} 
+  \begin{column}{5cm} 
+\begin{block}{PowerPC family}
+   \begin{itemize} \footnotesize	
+			\item AltiVec 128-bit int8, int16, int32, int64, float
+			\item Cell SPU 128-bit int8, int16, int32, int64, float, double
+		\end{itemize}
+\end{block}{}
+		
+\begin{block}{ARM family}
+   \begin{itemize} \footnotesize	
+			\item VFP 64-bit float, double
+			\item NEON 64-bit and 128-bit float, int8, int16, int32, int64
+		\end{itemize}
+\end{block}{}
+	
+  \end{column} 
+  \end{columns} 
+}
+
+\subsection{Explicit SIMD parallelization}
+\frame
+{
+  \frametitle{Why not let the compiler do it?}
+	
+  \begin{block}{Compilers are only so smart}
+  \footnotesize
+   \begin{itemize}
+		\footnotesize 
+		\item Automatic vectorization can only happen if:
+		\begin{itemize}
+			\item Memory is well agenced
+			\item Code is inherently vectorizable
+		\end{itemize}
+		\item Compiled functions are not vectorized (I look at you libm !)
+		\item Compilers don't always have enough static information to know what they can vectorize
+		\item Designing for vectorization is a human process
+	\end{itemize}
+	\end{block}{}
+	\begin{block}{Conclusion}
+	\begin{itemize}
+\footnotesize
+		\item Declaring SIMD parallelism explicitly is the best way
+              to get your code vectorized
+        \item To be demonstrated by this presentation
+    \end{itemize}
+\end{block}{}
+}
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Talk Layout}
+    \tableofcontents[currentsection,subsectionstyle=hide/hide/hide]
+  \end{frame}
+}

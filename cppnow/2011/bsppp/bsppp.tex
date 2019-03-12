@@ -1,0 +1,200 @@
+\frame
+{
+  \frametitle{BSML primitives}
+  \begin{block}{Distributed Vector}
+  \footnotesize
+   A BSP distributed vector is a vector where each element lives on a different BSP node
+  \begin{itemize}
+  \footnotesize
+  \item \texttt{<<v>>} : build a vector from value or a function $v$
+  \item \texttt{\$v\$} : access to the local vector element
+  \item A parallel vector of type $'a$ has type $par 'a$
+  \end{itemize}
+  \end{block}
+}
+
+\frame
+{
+  \frametitle{BSML primitives}
+  \begin{block}{The \texttt{proj} function}
+  \footnotesize
+   \begin{itemize}
+  \footnotesize
+  \item Replicates a parallel vector around all BSP nodes
+  \item Prototype: $proj : par\ 'a -> par\ (int-> 'a)$
+  \end{itemize}
+  \end{block}
+
+  \begin{block}{Semantic of $proj \, v$}
+  \begin{center}\pgfuseimage{bsp_proj}\end{center}
+  \end{block}
+}
+
+\frame
+{
+  \frametitle{BSML primitives}
+  \begin{block}{The \texttt{put} function}
+  \footnotesize
+   \begin{itemize}
+  \footnotesize
+  \item Generic all-to-all communications function
+  \item Prototype: $put : par\ (int\ ->\ 'a)\ ->\ par\ (int\ ->\ 'a)$
+  \end{itemize}
+  \end{block}
+
+  \begin{block}{Semantic of $put \, vf$}
+  \begin{center}\pgfuseimage{bsp_put}\end{center}
+  \end{block}
+}
+
+\frame
+{
+  \frametitle{A sample BSML Code}
+  \begin{block}{BSML Inner Product}
+  \lstbsml
+  \end{block}
+
+  \begin{block}{How does it works}<2->
+  \begin{itemize}
+  \footnotesize
+  \item Build a distributed vector from $v[i]^2$ in parallel
+  \item Exchange partial results with all nodes
+  \item Perform a final reduction
+  \end{itemize}
+  \end{block}
+}
+
+\frame
+{
+  \frametitle{From BSML to BSP++}
+  \begin{block}{Why looking at BSML}  
+  \begin{itemize}
+  \footnotesize
+   \item Provides a compact and abstract interface
+   \item BSML likes playing with lambda and so do we
+  \end{itemize}
+  \end{block}{}
+
+  \begin{block}{The Plan}  
+  \begin{itemize}
+  \footnotesize
+   \item Implement BSML interface and abstraction ic C++
+   \item Try to work on the functionnal side to limit errors
+   \item Try to play nice with C++ functionnal idioms
+  \end{itemize}
+  \end{block}{}
+}
+
+
+\frame
+{
+  \frametitle{BSP++ 101}
+  \begin{block}{Main Program Structure}
+  \begin{itemize}
+  \footnotesize
+  \item Managed main handles parallel runtime
+  \item Everything in a BSP programm is parallel
+  \end{itemize}
+  \end{block}{}
+
+  \begin{block}{Example}<2->
+  \lstbspmain
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{BSP++ primitives}
+  \begin{block}{Parallel vector : \texttt{par<T>}}
+  \begin{itemize}
+  \footnotesize
+  \item \texttt{par<T>} is a BSP distributed \texttt{T}
+  \item Constructible from values, functions and ranges
+  \end{itemize}
+  \end{block}{}
+
+  \begin{block}{\texttt{par<T>} Interface}<2->
+  \only<2>{\lstparctor}
+  \only<3>{\lstparaccess}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{BSP++ primitives}
+  \begin{block}{The \texttt{proj} and \texttt{put} function}
+  \begin{itemize}
+  \footnotesize
+  \item BSML returns function \textbf{value}
+  \item Let's return \textbf{Callable Object} embedding the result
+  \item Make them Range for easier interoperability 
+  \end{itemize} 
+  \end{block}{}
+
+  \begin{block}{Examples}<2->
+  \only<2>{\lstbspproj}
+  \only<3>{\lstbspput}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{A sample BSP++ code}
+  \begin{block}{BSP++ Inner Product}
+   \lstbspinnerproduct
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{Support for Hybrid programming}
+  \begin{center}
+  \pgfuseimage{hybrid}
+  \end{center}
+}
+
+\frame
+{
+  \frametitle{Support for Hybrid programming}
+  \begin{block}{BSP++ Hybrid Inner Product}
+  \lstbsphybridinnerproduct
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{The BSPGen Framework}
+  \begin{center}\pgfuseimage{framework}\end{center}
+}
+
+\frame
+{
+  \frametitle{Analysis and Exploration}
+  \begin{block}{Analysis}
+  \begin{itemize}
+   \footnotesize
+   \item Compile each sequential function using LLVM/Clang
+   \item Parse results to find out an estimation of runtime costs
+   \item Estimate communication from offline benchmarks
+  \end{itemize}
+  \end{block}{}
+
+  \begin{block}{Configuration exploration}
+  \begin{itemize}
+   \footnotesize
+   \item Buy a directed graph of the sequence of super-steps
+   \item Compute all combination of node/core configurations
+   \item Weights edge with estimated runtime cost 
+   \item Run a simple Shortest Path algorithm
+  \end{itemize}
+  \end{block}{}
+}
+\frame
+{
+  \frametitle{Analysis and Exploration}
+    \begin{block}{Configuration exploration}
+    \begin{center}\pgfuseimage{graph_inner_prod}\end{center}
+    \end{block}{}
+}
+
+

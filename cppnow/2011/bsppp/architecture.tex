@@ -1,0 +1,164 @@
+\frame
+{
+  \frametitle{Programming Tools and Models}
+  \begin{block}{Message Passing Interface (MPI)}
+  \begin{itemize}
+  \footnotesize
+  \item Run multiple process across distributed nodes
+  \item Process use \textbf{Message} to communicate
+  \item Provides a set of ready-to-use communications primitives
+ \end{itemize}
+  \end{block}{}
+
+  \begin{block}{OpenMP}
+  \begin{itemize}
+  \footnotesize
+  \item Standard language extension for shared memory system
+  \item Parallelism is expressed as \textbf{parallel sections} using \texttt{\#pragma}
+  \item Provides functions for threads handling and synchronization
+ \end{itemize}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{Higher Level Models}
+  \begin{block}{What do we need}
+  \begin{itemize}
+  \footnotesize
+  \item Architecture asbtraction
+  \item Performances estimation
+  \item Easy to use for the end user
+ \end{itemize}
+  \end{block}{}
+
+  \begin{block}{What's available ?}<2->
+  \begin{itemize}
+  \footnotesize
+  \item Stream processing
+  \item Parallel Skeletons
+  \item \alert<3->{Bulk Synchronous Parallelism}
+ \end{itemize}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{Bulk Synchronous Parallelism}
+  \begin{block}{Origin}
+  \begin{itemize}
+  \footnotesize
+  \item Proposed by L. Valiant in 1990
+  \item Present a constrained form of parallelism
+  \item Bridge the gap between machine and programs
+ \end{itemize}
+  \end{block}{}
+
+  \begin{block}{Principles}
+  \begin{itemize}
+  \footnotesize
+  \item A Machine Model
+  \item A Cost Model
+  \item A Programming Model
+ \end{itemize}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{BSP Machine Model}
+  \begin{center}\pgfuseimage{bsp_machine}\end{center}
+
+  \begin{block}{Definition}
+  \begin{itemize}
+  \footnotesize
+  \item Multiple Computing units : local memory + processor
+  \item One all-to-all interconnection network
+  \item A global barrier mechanism
+ \end{itemize}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{BSP Programming Model}
+  \begin{center}\pgfuseimage{bsp_program}\end{center}
+
+  \begin{block}{Definition of a Super-Step}
+  \begin{itemize}
+  \footnotesize
+  \item An asynchronous computation step
+  \item A all-to-all communication step
+  \item A global barrier
+ \end{itemize}
+  \end{block}{}
+}
+
+
+
+\frame
+{
+  \frametitle{BSP Cost Model}
+  \begin{block}{Definition}
+  \begin{itemize}
+  \footnotesize
+  \item $W_i$ : computation time on processor $i$
+  \item $h$ : amount of bytes to transfer
+  \item $g$ : network throughput
+  \item $L$ : Time for performing a barrier
+ \end{itemize}
+  \end{block}{}
+
+  \begin{block}{Cost of one super-step}
+  \begin{center}
+  $\Omega \, = \, \max W_i + h \times g + L$
+  \end{center}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{Existing BSP Library}
+  \begin{block}{Oxford BSPLib [Hill:96]}
+  \begin{itemize}
+  \footnotesize
+  \item C based
+  \item Rely on low-level shared memory runtime
+  \item Provides 20+ primitives for communications over different medium
+ \end{itemize}
+  \end{block}{}
+
+  \begin{block}{BSML [Gava:09]}
+  \begin{itemize}
+  \footnotesize
+  \footnotesize
+  \item Functionnal implementation of BSP in Caml
+  \item Notion of parallel 'vector'
+  \item Two communications + one synchronization primitives 
+  \item Provides an extended syntax for BSP construct in ML
+  \end{itemize}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{Why BSP ?}
+  \begin{block}{BSP Pros and Cons}
+  \begin{itemize}
+  \footnotesize
+  \item Straightforward \texttt{Seq of Par} programming model
+  \item Hybrid programming support with a black-box approach
+  \item Limited support for task parallelism
+  \item Barrier costs impact programm structure
+ \end{itemize}
+  \end{block}{}
+
+  \begin{block}{Our Plans}
+  \begin{itemize}
+  \footnotesize
+  \item Provide a BSP like library for parallel programming
+  \item Provide a tool for BSP application description
+  \item Use BSP cost Model to explore configuration space
+ \end{itemize}
+  \end{block}{}
+}

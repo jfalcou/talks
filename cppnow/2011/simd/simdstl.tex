@@ -1,0 +1,151 @@
+\section{SIMD and STL}
+\subsection{Rationale}
+\frame
+{
+  \frametitle{Operations vs Data}
+  \begin{block}{Where/How to store our data ?}
+  \begin{itemize}
+  \item SIMD operations require data to operate onto
+  \item Usual approaches force a specific container type onto users
+  \item Not generic enough
+  \end{itemize}
+  \end{block}{}
+
+  \begin{block}{A better approach}<2->
+  \begin{itemize}
+  \item SIMD compliant allocators
+  \item SIMD Range and Iterators over ContiguousRange
+  \item Adapt our SIMD classes to work with a subset of STD algorithms
+  \end{itemize}
+  \end{block}{}
+}
+
+
+\subsection{SIMD Allocator}
+\frame
+{
+  \frametitle{SIMD allocators}
+  \begin{block}{Rationale}
+  \begin{itemize}
+  \item Allow containers to handle memory in a SIMD compliant way
+  \item Handles alignment of memory
+  \item Handles padding of memory
+  \end{itemize}
+  \end{block}{}
+
+  \begin{block}{Example}
+  \begin{center}
+  \lstallocator
+  \end{center}
+  \end{block}{}
+}
+
+\subsection{SIMD Iterator and Ranges}
+\frame
+{
+  \frametitle{From Range to SIMDRange}
+  \begin{block}{Iterator interface}
+  \begin{itemize}
+  \item Boost.SIMD provides \texttt{simd::begin()}/\texttt{simd::end()}
+  \item Turn iterators into SIMD iterators returning \texttt{pack}
+  \item Take a regular range, iterate over it in SIMD
+  \end{itemize}
+  \end{block}
+
+  \begin{block}{Example}<2->
+  \begin{center}
+  \only<2>{\pgfuseimage{simd-range}}
+  \only<3>{\lststlrange}
+  \only<4>{\lststlrangeb}
+  \end{center}
+  \end{block}
+}
+
+\frame
+{
+  \frametitle{From Range to SIMDRange}
+  \begin{block}{Iterator interface}
+  \begin{itemize}
+  \item \texttt{native} and \texttt{pack} provides \texttt{begin()}/\texttt{end()}
+  \item Directly usable in STD algorithms
+  \item Directly usable in Boost.Range algorithms
+  \end{itemize}
+  \end{block}{}
+
+  \begin{block}{Example}
+  \begin{center}
+  \lstpackrange
+  \end{center}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{SIMD values as Range}
+  \begin{block}{Putting everything together}
+  \begin{center}
+  \lstranges
+  \end{center}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{SIMD values as Range}
+  \begin{block}{Putting everything together - Better version}
+  \begin{center}
+  \lstrangesb
+  \end{center}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{SIMD values as Range}
+  \begin{block}{\texttt{std::accumulate} speed-up for \texttt{double}}
+  \begin{center}
+  \pgfuseimage{accu-double}
+  \end{center}
+  \end{block}{}
+}
+
+
+\frame
+{
+  \frametitle{SIMD values as Range}
+  \begin{block}{\texttt{std::accumulate} speed-up for \texttt{float}}
+  \begin{center}
+  \pgfuseimage{accu-float}
+  \end{center}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{SIMD Range and generic SIMD/scalar code}
+  \begin{block}{Back to RGB2Grey}
+  \begin{center}
+  \lstrangergb
+  \end{center}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{What's Missing ?}
+  \begin{block}{Integrated SIMD support}
+  \begin{itemize}\footnotesize
+  \item Most STD algorithms should be specialized to be run in one scoop
+  \item Can we have a Boost.Range adaptor like \texttt{simd(r)} ?
+  \item Support for shifted Range using \texttt{load<T,N>}
+  \end{itemize}
+  \end{block}{}
+
+  \begin{block}{Some SIMD mind teasers}
+  \begin{itemize}\footnotesize
+  \item SIMD \texttt{find} ? 
+  \item SIMD \texttt{sort} ? 
+  \item Accelerating stuff like \texttt{copy} ?
+  \end{itemize}
+  \end{block}{}
+}

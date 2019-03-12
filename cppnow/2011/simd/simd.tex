@@ -1,0 +1,108 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Darmstadt}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+\setbeamertemplate{navigation symbols}{} 
+
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath} 
+\usepackage{multicol}
+\usepackage{multimedia,pgf,xmpmulti,listings}
+\usepackage{amsmath,amssymb,latexsym}
+
+\definecolor{orangeish}{rgb}{1,0.45,0}
+\definecolor{ForestGreen}{rgb}{.25,0.45,0.25}
+
+\usepackage{listings}
+
+\lstset{
+  language=C++,
+  keywordstyle=\color{blue},
+  identifierstyle=\color{ForestGreen},
+  commentstyle=\color{red},
+  stringstyle=\color{orangeish},
+  frame=leftline,
+  showstringspaces=false}
+
+\title{Practical SIMD acceleration with Boost.SIMD}
+
+\author{Mathias Gaunard \and Joël Falcou \and Jean-Thierry Lapresté}
+\institute[MetaScale]{MetaScale}
+\date[BOOST 2011]{Boostcon 2011}
+\subject{Computer Science}
+
+\pgfdeclareimage[height=0.5cm]{university-logo}{logo}
+\pgfdeclareimage[height=3cm]{load}{load}
+\pgfdeclareimage[height=3cm]{load-offset}{load-offset}
+\pgfdeclareimage[height=3cm]{simd-range}{simd-range}
+\pgfdeclareimage[height=5cm]{simd-schema}{simd-schema}
+\pgfdeclareimage[height=5cm]{accu-float}{accu-float}
+\pgfdeclareimage[height=5cm]{accu-double}{accu-double}
+\pgfdeclareimage[height=6cm]{scalar_average}{scalar_average}
+\pgfdeclareimage[height=6cm]{simd_average}{simd_average}
+\pgfdeclareimage[height=6cm]{simd_average_vector}{simd_average_vector}
+
+
+
+\logo{\pgfuseimage{university-logo}}
+
+\begin{document}
+
+\include{slideslst}
+
+\begin{frame}
+\titlepage
+\end{frame}
+\include{introduction}
+\include{interface}
+\include{simdstl}
+\include{simdspec}
+
+\section{Conclusion}
+\frame
+{
+  \frametitle{Overview of Boost.SIMD}
+  \begin{block}{Our goals}
+   \begin{itemize}
+\footnotesize
+\item Bring SIMD programing to a usable state
+\item if we have \texttt{boost.atomic}, why not \texttt{boost.simd} ?
+\item Be attractive by being nice with the rest of C++
+\end{itemize}
+  \end{block}{}
+
+  \begin{block}{What we achieved}
+  \begin{itemize}
+  \footnotesize
+  \item Leveraging what we learned in $NT^2$
+  \item Demonstrated some impacts in term of performance
+  \item Made using SIMD almost as simple than scalar
+  \end{itemize}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{Upcoming works}
+  \begin{block}{Google Summer of Code 2011}
+  \begin{itemize}
+  \footnotesize
+  \item Cleanign up the mess and boostify it
+  \item Improve STL/Boost compatibility
+  \item \alert{Wanted: Applications so we can have real life examples in the library}
+  \end{itemize}
+  \end{block}{}
+}
+
+\frame
+{
+\begin{center}\Huge Thanks for your attention\end{center}
+}
+
+\end{document}

@@ -1,0 +1,274 @@
+
+\section{Interface}
+\subsection{Hand-written SIMD}
+\begin{frame}[fragile]
+	\frametitle{Writing it by hand}
+
+	\begin{block}{Doing \texttt{a * b + c} with vectors of 32-bit integers : SSE}
+	\lstsse
+	\end{block}{}
+	
+	\begin{block}{Doing \texttt{a * b + c} with vectors of 32-bit integers : Altivec}
+	\lstvmx
+	\end{block}{}
+\end{frame}
+
+\subsection{Pack}
+\frame
+{
+	\frametitle{The pack abstraction}
+	\begin{block}{\texttt{simd::pack<T>}}
+	\begin{tabular}{ll}
+	\texttt{pack<T, N>} & SIMD register that packs \texttt{N} elements of type \texttt{T}\\
+	\texttt{pack<T>} & automatically finds best \texttt{N} available
+	\end{tabular}
+	\begin{itemize}
+\footnotesize
+	\item Behaves just like \texttt{T} except operations yield a pack of \texttt{T} and not a \texttt{T}.
+\end{itemize}
+	\end{block}{}
+	
+	\begin{block}{Constraints}
+         \begin{itemize}
+\footnotesize
+\item	\texttt{T} must be a fundamental arithmetic type, i.e. (\lstinline{un})\lstinline{signed char}, (\lstinline{unsigned}) \lstinline{short}, (\lstinline{unsigned}) \lstinline{int}, (\lstinline{unsigned}) \lstinline{long}, (\lstinline{unsigned}) \lstinline{long long}, \lstinline{float} or \lstinline{double} -- not \lstinline{bool}.
+	
+	\item \texttt{N} must be a power of 2.
+	\end{itemize}
+       \end{block}{}
+}
+
+
+\subsection{Primitives}
+
+\frame
+{
+  \frametitle{\texttt{pack} API}
+	
+  \begin{block}{Operators}
+	\begin{itemize}
+   \footnotesize
+		\item All overloadable operators are available
+		\item \lstinline{pack<T>} x \lstinline{pack<T>} operations but also \lstinline{pack<T>} x \lstinline{T}
+		\item Type coercion and promotion disabled\\
+		      \lstinline{uint8_t(255) + uint8_t(1)} yields \lstinline{uint8_t(0)}, not \lstinline{int(256)}
+	\end{itemize}	
+	\end{block}{}
+
+	\begin{block}{Comparisons}
+	 \begin{itemize}
+\footnotesize
+	\item \texttt{==, !=, <, <=,>} and \texttt{>=} perform lexical comparisons.
+	\item \texttt{eq,neq,lt,gt,le} and \texttt{ge} as functions return \texttt{pack} of boolean.
+\end{itemize}
+\end{block}{}
+\begin{block}{Other properties}
+	\begin{itemize}
+   \footnotesize
+		\item Models both a \texttt{ReadOnlyRandomAccessFusionSequence} and \texttt{ReadOnlyRandomAccessRange}
+		\item \lstinline{at\_c<i>(p)} or \lstinline{p[i]} can be used to access the i-th element, but is usually slow (\lstinline{at\_c} is faster)
+	\end{itemize}
+	\end{block}{}
+}
+
+\frame
+{
+  \frametitle{\texttt{pack} API}
+	
+	\begin{block}{Memory access}
+\footnotesize
+ Memory must be aligned on \lstinline{sizeof(T)*N} to load/store a \lstinline{pack<T, N>}
+	from or to a \lstinline{T*}. Errors leads to undefined behaviors.
+\end{block}{}
+
+\begin{block}{Examples}<2->
+\only<2>
+{
+\footnotesize
+\lstinline{load< pack<T, N> >(p, i)} loads pack at aligned address \lstinline{p + i*N}
+\begin{center}\pgfuseimage{load}\end{center}
+}
+
+\only<3>
+{
+\footnotesize
+\lstinline{load< pack<T, N>, Offset>(p, i)} loads pack at address \lstinline{p + i*N + Offset}, \lstinline{p + i} must be aligned.
+\begin{center}\pgfuseimage{load-offset}\end{center}
+}
+
+\only<4>
+{
+\footnotesize
+  \lstinline{store(p, i, pk)} stores pack \lstinline{pk} at aligned address \lstinline{p + i*N}
+}
+\end{block}{}
+}
+
+\frame
+{
+  \frametitle{\texttt{pack} as a \texttt{proto} entity}
+	
+	\begin{block}{Rationale}
+	\begin{itemize}\footnotesize
+       \item Most SIMD ISA have fused operations (FMA, etc...)
+     \item We want to write simple code but yet get best performances out of these
+  \item We need lazy evaluation : \texttt{proto} to the rescue !
+        \end{itemize}
+	\end{block}{}
+	
+	\begin{block}{Advantage}
+	\begin{itemize}\footnotesize
+		\item All expressions, even those involving functions,
+		      generate template expressions that are evaluated on assignment
+		      or in the conversion operator
+		\item \lstinline{a * b + c} is mapped to \lstinline{fma(a, b, c)}\\
+		      \lstinline{a + b * c} is mapped to \lstinline{fma(b, c, a)}\\
+		      \lstinline{!(a < b)} is mapped to \lstinline{is_nle(a, b)}
+   \item the optimisation system is open for extensions
+	\end{itemize}
+	\end{block}{}
+}
+
+\begin{frame}
+	\frametitle{Extra arithmetic, bitwise and ieee operations, predicates}
+	
+	\begin{multicols}{3}		
+	
+		\textbf{Arithmetic}
+		\begin{itemize}
+			\item saturated arithmetic
+			\item float/int conversion
+			\item round, floor, ceil, trunc
+			\item sqrt, hypot
+			\item average
+			\item random
+			\item min/max
+			\item rounded division and remainder
+		\end{itemize}
+
+		\textbf{Bitwise}
+		\begin{itemize}			
+			\item select
+			\item andnot, ornot
+			\item popcnt
+			\item ffs
+			\item ror, rol
+			\item rshr, rshl
+			\item twopower
+		\end{itemize}
+			\vfill
+		\textbf{IEEE}
+		\begin{itemize}
+			\item ilogb, frexp
+			\item ldexp
+			\item next/prev
+			\item ulpdist
+		\end{itemize}
+			
+		\textbf{Predicates}
+		\begin{itemize}
+			\item comparison with zero
+			\item negation of comparison
+			\item is\_unord, is\_nan, is\_invalid
+			\item is\_odd, is\_even
+			\item majority
+		\end{itemize}
+		
+		\vfill
+	
+	\end{multicols}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Reduction and SWAR operations}
+	
+	\begin{multicols}{2}	
+	
+	\textbf{Reduction}
+	\begin{itemize}
+		\item any, all
+		\item nbtrue
+		\item minimum/maximum, posmin/posmax
+		\item sum
+		\item product, dot product
+	\end{itemize}
+	\columnbreak	
+	
+	\textbf{SWAR}
+	\begin{itemize}
+		\item group/split
+		\item splatted reduction
+		\item cumsum
+		\item sort
+	\end{itemize}
+	
+	\vfill
+	\end{multicols}
+	
+\end{frame}
+
+\subsection{Extension Points}
+\frame
+{
+	\frametitle{\texttt{native<T, X>} : SIMD register of \texttt{T} on arch. \texttt{X}}
+	
+      	\begin{block}{Semantic}
+	\begin{itemize}\footnotesize
+		\item like \lstinline{pack} but Plain Old Data and all operations and functions return values and not
+		      expression templates.
+		\item \lstinline{X} characterizes the register type, not the instructions available. Only one tag for all
+		      SSE variants.
+		\item It is the interface that must be used to extend the library.
+	\end{itemize}
+	\end{block}{}
+	
+        \begin{block}{Example}\footnotesize
+	\begin{tabular}{ll}
+	\lstinline{native<float, tag::sse_>} & wraps a \lstinline{__m128}\\
+	\lstinline{native<uint8_t, tag::sse_>} & wraps a \lstinline{__m128i}\\
+	\lstinline{native<double, tag::avx_>} & wraps a \lstinline{__m256d}\\
+	\lstinline{native<float, tag::altivec_>} & wraps a \lstinline{__vector float}
+	\end{tabular}
+	\end{block}{}
+}
+
+\frame
+{
+\frametitle{\texttt{native<T, X>} : SIMD register of \texttt{T} on arch. \texttt{X}}
+		
+\begin{block}{Software fallback}
+	\begin{itemize}\footnotesize
+		\item \lstinline{tag::none_<N>} is a software-emulated SIMD architecture with a register size of \lstinline{N} bytes
+		\item It is used as fallback when no satisfying SIMD architecture is found
+		\item Thanks to this, code can degrade well and remain portable.
+	\item Default native type when no SIMD is found : \lstinline{native<T, tag::none_<8> >}
+	
+	\end{itemize}
+	\end{block}{}	
+	}
+
+\subsection{RGB to grayscale}
+\frame
+{
+  \frametitle{RGB to grayscale}
+  \begin{block}{Scalar version}
+  \lstrgb
+  \end{block}{}	
+
+  \begin{block}{SIMD version}
+  \lstrgbsimd
+  \end{block}{}	
+}
+
+\begin{frame}
+	\frametitle{Easy enough, but what if...}
+
+	\begin{itemize}
+		\item ... I've got interleaved RGB or RGBA?
+		\item ... I've got 8-bit integers and not floats?
+	\end{itemize}
+	
+	Sounds more complicated, we'll see that later.
+	
+\end{frame}

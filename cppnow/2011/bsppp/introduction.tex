@@ -1,0 +1,65 @@
+\frame
+{
+  \frametitle{The March of Hybrid Parallelism}
+  \begin{block}{What's up on the HPC planet ?}
+  \begin{itemize}
+  \footnotesize
+   \item Machines are becoming more and more hybrids
+   \item HPC Top500 : 80\% of clusters of multicores
+   \item HPC Top10 : multicores + GPGPUs or Cell Processors
+   \item Most modern desktop computer are small HPC nodes
+   \end{itemize}
+  \end{block}{}
+
+  \begin{block}{So is the free lunch free again ?}<2->
+  \begin{itemize}
+  \footnotesize
+   \item Difficulties scale changed
+   \item Combining all these new toys become increasingly complex
+   \item Does having more mean it obviously goes faster ?
+   \end{itemize}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{What's left to do so ?}
+  \begin{block}{What happens in the literature ?}
+  \begin{itemize}
+  \footnotesize
+   \item<2-> Performance improvement using MPI and OpenMP\\
+   \item<3-> Poor performance adding OpenMP to MPI programs \\
+   \end{itemize}
+  \end{block}{}
+
+  \begin{block}{Hybrid programming is a complex problem}<4->
+   \begin{itemize}
+   \footnotesize
+   \item Architecture: network bandwith, number of cores, type of accelerators ...\\
+   \item Application: Communication computation ratio, problem size ... \\
+   \item Programming model: MPI, MPI+OpenMP, MPI+CUDA, OpenMP+CUDA, MPI+OpenMP+CUDA, oh my ... \\
+   \end{itemize}
+  \end{block}{}
+}
+
+
+\frame
+{
+  \frametitle{Purpose of this talk}
+  \begin{block}{Our Objectives}
+  \begin{itemize}
+  \footnotesize
+  \item Find a way to simplify this mess
+  \item Can we find a decent programming model for this ?
+  \end{itemize}
+  \end{block}{}
+
+  \begin{block}{Our Work}
+  \begin{itemize}
+  \footnotesize
+  \item A library for hybrid programming
+  \item A tool to help in configuration exploration
+  \item All using Boost of course
+  \end{itemize}
+  \end{block}{}
+}

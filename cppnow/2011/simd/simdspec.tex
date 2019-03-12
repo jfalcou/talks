@@ -1,0 +1,69 @@
+\section{SIMD Specific Idioms}
+\subsection{Handling conditionnals}
+\frame 
+{
+  \frametitle{Boolean values in SIMD}
+  \begin{block}{The Problem}
+  \lstsimdbool
+  \only<2->{ \lstsimdboolresult }
+ \end{block}{}
+
+  \only<3->{
+  \begin{block}{The Solution}
+  \lstsimdboolvalue
+  \end{block}{}
+}
+}
+
+\frame 
+{
+  \frametitle{Conditionnal in SIMD}
+  \begin{block}{Example}
+ \only<1>{ \lstsimdwhere }
+ \only<2>{ \lstsimdwheredone }
+ \end{block}{}
+}
+
+\subsection{Shifted Loads}
+\frame 
+{
+  \frametitle{Motivation}
+   \begin{center}\pgfuseimage{scalar_average}\end{center}
+}
+
+\frame 
+{
+  \frametitle{Getting there ...}
+   \begin{center}\pgfuseimage{simd_average}\end{center}
+}
+
+\frame 
+{
+  \frametitle{The vector solution}
+   \begin{center}\pgfuseimage{simd_average_vector}\end{center}
+}
+
+\frame 
+{
+  \frametitle{The vector solution}
+   \begin{block}{SIMD/Scalar version}
+   \lstfilter
+   \end{block}
+}
+
+\subsection{Promotion and Saturation}
+\frame
+{
+	\frametitle{Back to RGB2Grey}
+   	\begin{block}{8-bit RGB}
+	\lstbitsrgb
+	\end{block}{}
+}
+
+\frame
+{
+	\frametitle{Back to RGB2Grey}
+   	\begin{block}{Promote the pack}
+	\lstpromotergb
+	\end{block}{}
+}

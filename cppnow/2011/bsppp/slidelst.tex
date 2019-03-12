@@ -1,0 +1,145 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BSML inner product
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstbsml{%
+\begin{lstlisting}
+let inner_product v =
+  let local = << Array.fold_left (+.) (Array.map2 (*.) $v$ $v$) >>
+    in let gathered = proj local
+      in Array.fold_left (+.) (Array.make gathered nprocs) ;;
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BSP++ Main
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstbspmain{%
+\begin{lstlisting}
+#include <bsppp/bsppp.hpp>
+
+int bsp_main( int argc, char const* argv[] )
+{
+   // Starting from here, everythign is parallel
+  
+}
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BSP++ par
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstparctor{%
+\begin{lstlisting}
+// distributed default construction
+par<T> p;   
+
+// distributed replication
+T v;
+par<T> p = v;   
+
+// distributed initialization from a Callable Object
+T foo(std::size_t pid);
+par<T> p = foo; 
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BSP++ par
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstparaccess{%
+\begin{lstlisting}
+// Access to local value
+par<T> p;   
+
+T x = *p;
+
+// Envelope behavior
+par< vector<T> > p;
+p->resize(n); 
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BSP++ proj
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstbspproj{%
+\begin{lstlisting}
+par< float > r = 1.f / _1;
+result_of::proj<float> exch = proj (r);
+
+// Value at machine 1
+cout << exch(1) << endl;
+
+// Iterate over value receive from all machines
+std::for_each( exch.begin(), exch.end(), ref(cout) << _1 );
+\end{lstlisting}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BSP++ put
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstbspput{%
+\begin{lstlisting}
+par< float > r = 1.f / _1;
+
+auto inv = put(  [&r](int dst) { if(dst % 2) return *r; else return -*r; }  );
+
+// Value at machine 1
+cout << (*inv)(1) << endl;
+\end{lstlisting}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BSP++ inner product
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstbspinnerproduct{%
+\begin{lstlisting}
+template<class Range>
+typename iterator_value<typename Range::const_iterator>::type
+inner_product( Range const& input )
+{
+  typedef typename
+          iterator_value<typename Range::const_iterator>::type value_type;
+
+  par<Range> v = slice( input );
+  par< value_type > r;
+
+  *r = std::inner_product( v->begin(), v->end(), v->begin(), value_type() );
+   
+  result_of::proj<value_type> exch = proj (r);
+  *r = std::accumulate(exch.begin(), exch.end() );
+}
+\end{lstlisting}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BSP++ hybrid inner product
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=C++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstbsphybridinnerproduct{%
+\begin{lstlisting}
+template<class Range>
+typename iterator_value<typename Range::const_iterator>::type
+inner_product_omp( Range const& input )
+{
+  typedef typename
+          iterator_value<typename Range::const_iterator>::type value_type;
+  BSP_HYB_START(argc, argv)
+  {
+    par<Range> v = slice( input );
+    par< value_type > r;
+    *r = std::inner_product( v->begin(), v->end(), v->begin(), value_type() );
+     result_of::proj<value_type> exch = proj (r);
+    *r = std::accumulate(exch.begin(), exch.end() );
+  }
+}
+
+template<class Range>
+typename iterator_value<typename Range::const_iterator>::type
+inner_product( Range const& input )
+{
+  typedef typename
+          iterator_value<typename Range::const_iterator>::type value_type;
+
+  par<Range> v = slice( input );
+  par< value_type > r;
+  *r = inner_product_omp( v );
+  result_of::proj<value_type> exch = proj (r);
+  *r = std::accumulate(exch.begin(), exch.end() );
+}
+\end{lstlisting}}
+

@@ -1,0 +1,106 @@
+\documentclass[color=option]{beamer}
+
+\mode<presentation>
+\usepackage[english,french]{babel} 
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times} 
+\usepackage{multimedia,pgf,xmpmulti,listings}
+\usepackage{amsmath,amssymb,latexsym}
+\usetheme{progressbar}
+
+\definecolor{orangeish}{rgb}{1,0.45,0}
+\definecolor{ForestGreen}{rgb}{.25,0.45,0.25}
+
+\progressbaroptions{headline=sections,frametitle=normal,titlepage=normal}
+
+\usepackage{listings}
+\lstset{
+  language=C++,
+  keywordstyle=\color{blue},
+  identifierstyle=\color{ForestGreen},
+  commentstyle=\color{red},
+  stringstyle=\color{orangeish},
+  frame=leftline,
+  showstringspaces=false}
+\lstset{escapechar=|}
+ 
+\providecommand{\cpp}[1][~]{\textsc{C++}#1}
+\providecommand{\ie}[1][~]{\textit{i.e.}#1}
+\providecommand{\eg}[1][~]{\textit{e.g.#1}}
+\providecommand{\ntd}[1][~]{NT$^2$#1}
+\providecommand{\matlab}[1][~]{\textsc{Matlab}#1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title[Boost'Con 2011]{Automatic Hybrid MPI+OpenMP Code Generation}
+
+\author{Khaled Hamidouche, Joel Falcou}
+
+\institute{LRI, University Paris Sud XI}
+
+\date{05/17/2011}
+
+\begin{document}
+\input{slidelst}
+\input{slideimages}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame{\titlepage}
+\selectlanguage{english}
+
+\frame[plain]
+{
+\begin{center}\Huge Disclaimer\end{center}
+\begin{center}\huge There is actually \textbf{no} Boost.Proto in this presentation\end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Introduction
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\include{introduction}
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Talk Layout}
+    \tableofcontents[currentsection,subsectionstyle=hide/hide/hide]
+  \end{frame}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Hybrid machines, MPI,OpenMP and the BSP Model
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{High Level Programming Models}
+\include{architecture}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% BSP++
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{BSP++}
+\include{bsppp}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Applciations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Applications}
+\include{applications}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Conclusion
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+\include{conclusion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame[plain]
+{
+\begin{center}\Huge Thanks for your attention\end{center}
+}
+
+\end{document}

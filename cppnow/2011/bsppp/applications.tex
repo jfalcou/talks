@@ -1,0 +1,100 @@
+\frame
+{
+  \frametitle{Objectives}
+  \begin{block}{Coverage}
+ \begin{itemize}
+  \footnotesize
+  \item Simple kernels
+  \item Three applications
+  \end{itemize}
+  \end{block}{}
+
+  \begin{block}{Test machines}
+  \begin{itemize}
+  \footnotesize
+  \item a 4x4 cores NUMA machine using AMD processors
+  \item 256 nodes from the French GRID'5000 infra-structure
+  \item a 3 Cell processors cluster
+  \end{itemize}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{Simple Kernels}
+  \begin{block}{Chosen Kernels}
+  \begin{itemize}
+  \item Matrix-Vector product (GEMV)
+  \item MapReduce
+  \end{itemize}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{Simple Kernels}
+  \begin{block}{Results}
+   \only<1>{\begin{center}\pgfuseimage{mpi_omp_gmv}\end{center}}
+   \only<2>{\begin{center}\pgfuseimage{hybrid_gmv}\end{center}}
+   \only<3>{\begin{center}\pgfuseimage{mpi_omp_mapreduce}\end{center}}
+   \only<4>{\begin{center}\pgfuseimage{hybrid_mapreduce}\end{center}}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{Model Checking}
+  \begin{block}{Parallel Approximate Model Checking [Peyronnet:08]}
+  \begin{itemize}
+  \footnotesize
+  \item Complex systems need verification
+  \item Turn system into a set of condition driven states
+  \item Try to solve time-logic predicates over the model
+  \item Large problem, can be solved approximately (APMC)
+  \end{itemize}
+  \end{block}{}
+}
+
+\frame
+{
+  \frametitle{Model Checking}
+  \begin{block}{Results}
+   \only<1>{\begin{center}\pgfuseimage{philosophs}\end{center}}
+   \only<2>{\begin{center}\pgfuseimage{sensors}\end{center}}
+   \only<3>{
+  \begin{itemize}
+  \footnotesize
+  \item Great scalability over more than 200 cores
+  \item Parallel APMC allows for larger problem to be verified
+  \item See [Hamidouche PDMC 2010] for more
+  \end{itemize}
+   }
+  \end{block}{}
+
+}
+
+\frame
+{
+  \frametitle{Swith and Waterman DNA Comparisons}
+  \begin{block}{Principles}
+  \begin{itemize}
+  \footnotesize
+  \item Compute distance between two DNA sequences
+  \item Heuristic method : BLAST fast but not accurate
+  \item Direct method : S\&W accurate but slow
+  \end{itemize}
+  \end{block}{}
+}
+\frame
+{
+  \frametitle{Swith and Waterman DNA Comparisons}
+\begin{center}\pgfuseimage{partition}\end{center}
+}
+\frame
+{
+  \frametitle{Swith and Waterman DNA Comparisons}
+  \begin{block}{Results - 1 MBases comparisons}
+   \only<1>{\begin{center}\pgfuseimage{mpi_omp_sw}\end{center}}
+   \only<2>{\begin{center}\pgfuseimage{hybrid_sw}\end{center}}
+  \end{block}{}
+}
