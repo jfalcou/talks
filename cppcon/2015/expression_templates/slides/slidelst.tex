@@ -1,0 +1,355 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Exemple Spirit
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstspirit{%
+\begin{lstlisting}
+template <typename Iterator> 
+kaleidoscope<Iterator>::kaleidoscope() : kaleidoscope::base_type(program,"program")
+{
+    identifier = qi::lexeme[char_("a-zA-Z") >> *char_("0-9a-zA-Z")];
+    proto    = identifier > '(' >> -(identifier % ',') > ')';
+    func     = proto > arithm;
+    program  =   lit("extern") > proto      
+               | lit("def")    > func 
+               | arithm;
+
+    // Error handling 
+    proto.name("prototype");
+    func.name("function definition");
+    program.name("toplevel");
+
+    on_error<fail>
+        (
+         program 
+         , std::cout
+         << ph::val("Error! Expecting ")
+         << _4                               // what failed?
+         << ph::val(" here: \"")
+         << ph::construct<std::string>(_3, _2)   // iterators to error-pos, end
+         << ph::val("\"")
+         << std::endl
+        );
+}
+\end{lstlisting}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% unary,binary_expr
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{basicstyle=\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstunary{%
+\begin{lstlisting}
+template<class Tag, class Child> 
+struct unary_expr
+{
+  explicit unary_expr(const Child& p) : c(p) {}
+
+  auto operator()() const { return op(c()); }
+
+  private:
+  Child c;
+  Tag op;
+};
+\end{lstlisting}
+}
+
+\lstset{basicstyle=\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstbinary{%
+\begin{lstlisting}
+template<class Tag, class Child0, class Child1> 
+struct binary_expr
+{
+  binary_expr(const Child0& p0,const Child1& p1) 
+             :  c0(p0), c1(p1) {}
+
+  auto operator()() const 
+  { 
+    return op(c0(),c1()); 
+  }
+
+  private:
+  Child0 c0;  Child1 c1;
+  Tag op;
+};
+\end{lstlisting}
+}
+
+
+\lstset{basicstyle=\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstterminal{%
+\begin{lstlisting}
+template<class T> struct terminal
+{
+  explicit terminal(T const& v) : value{v}{}
+  auto operator()() const { return value; }
+ 
+  private:
+  T value;
+};
+\end{lstlisting}
+}
+
+\lstset{basicstyle=\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstcrtp{%
+\begin{lstlisting}
+template <class T>  struct Base
+{
+  void interface()
+  {
+    static_cast<T &>(*this).implementation();
+  }
+};
+
+struct Derived : Base<Derived>
+{
+  void implementation();
+};
+\end{lstlisting}
+}
+
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstcrtpexpr{%
+\begin{lstlisting}
+template <class Derived>
+struct base_expr
+{
+  Derived const& self() const { return static_cast<const Derived&>(*this); }
+  auto operator()() const { return self()(); }
+};
+
+template<class Tag, class Child0> 
+struct unary_expr : base_expr<unary_expr<Tag,Child0>>
+{ /* ... */ };
+
+template<class Tag, class Child0, class Child1> 
+struct binary_expr : base_expr<binary_expr<Tag,Child0,Child1>>
+{ /* ... */ };
+
+template<class T> 
+struct terminal : base_expr<terminal<T>>
+{ /* ... */ };
+\end{lstlisting}
+}
+
+\lstset{basicstyle=\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstcrtpop{%
+\begin{lstlisting}
+struct plus_
+{
+  template<class T> 
+  T operator()(T a, T b) const { return a+b; }
+};
+
+template<class D1, class D2>
+binary_expr<plus_,D1, D2> 
+operator+( base_expr<D1> const& d1
+         , base_expr<D2> const& d2
+         )
+{ 
+  return {d1.self(), d2.self()}; 
+}
+\end{lstlisting}
+}
+
+
+
+\lstset{basicstyle=\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstprotoa{%
+\begin{lstlisting}
+#include <boost/proto/proto.hpp>
+
+boost::proto::terminal<int>::type x;
+
+int main()
+{
+  auto u = x*x+x-3/~x;
+  boost::proto::display_expr(u);
+}
+\end{lstlisting}
+}
+
+
+\lstset{basicstyle=\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstprotoaout{%
+\begin{lstlisting}
+minus(
+    plus(
+        multiplies(
+            terminal(0)
+          , terminal(0)
+        )
+      , terminal(0)
+    )
+  , divides(
+        terminal(3)
+      , complement(
+            terminal(0)
+        )
+    )
+)
+\end{lstlisting}
+}
+
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstprotomatch{%
+\begin{lstlisting}
+#include <boost/proto/proto.hpp>
+
+using boost::proto::_;
+using boost::proto::or_;
+using boost::proto::plus;
+using boost::proto::multiplies;
+using boost::proto::terminal;
+
+struct epa  : boost::proto::or_< terminal<_>
+                                , plus<epa,epa>
+                                , multiplies<epa,epa>
+                                >
+{};
+
+int main()
+{
+  terminal<int>::type x{2};
+  
+  std::cout << boost::proto::matches<decltype(x+x), epa>::value << "\n";
+  std::cout << boost::proto::matches<decltype(x/!x), epa>::value << "\n";
+}
+\end{lstlisting}
+}
+
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstprotoeval{%
+\begin{lstlisting}
+#include <boost/proto/proto.hpp>
+
+using boost::proto::_;
+using boost::proto::or_;
+using boost::proto::when;
+using boost::proto::_value;
+using boost::proto::otherwise;
+using boost::proto::_default;
+using boost::proto::terminal;
+
+struct eval  : boost::proto::or_< when<terminal<_>,_value>
+                                , otherwise< _default<eval> >
+                                >
+{};
+
+int main()
+{
+  terminal<int>::type x{2};
+
+  eval e;
+  std::cout << e(x+x*x+3) << "\n";
+}
+\end{lstlisting}
+}
+
+
+
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstprotoevalcustom{%
+\begin{lstlisting}
+struct custom : boost::proto::callable
+{
+  using result_type = double;
+  
+  template<typename T, typename U>
+  result_type operator()(T const& t, U const& u) const
+  {
+     return (t+u)*100;
+  }
+};
+
+struct eval  : boost::proto::or_< when<terminal<_>,_value>
+                                , when< plus<eval,eval>, custom(eval(_left),eval(_right))>
+                                , otherwise< _default<eval> >
+                                >
+{};
+
+int main()
+{
+  terminal<int>::type x{2};
+
+  eval e;
+  std::cout << e(x+x*x+3) << "\n";
+}
+\end{lstlisting}
+}
+
+
+\lstset{basicstyle=\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstautoissue{%
+\begin{lstlisting}
+array x(10),y(10);
+auto z = x+y*3.f;
+
+// fail
+assert(is_same<decltype(z),array>::value);
+\end{lstlisting}
+}
+
+
+\lstset{basicstyle=\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstgenericissue{%
+\begin{lstlisting}
+template<class T> T bad_double( T const& x )
+{
+  return x+x;
+}
+
+template<class T> auto good_double( T const& x )
+{
+  return x+x;
+}
+\end{lstlisting}
+}
+
+\lstset{basicstyle=\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstmultieval{%
+\begin{lstlisting}
+template<class T> auto foo( T const& x )
+{
+  auto d = x+x;
+  return d*d;
+}
+\end{lstlisting}
+}
+
+\lstset{basicstyle=\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstdang{%
+\begin{lstlisting}
+template<class T> auto foo( T const& x )
+{
+  array t = sum(2*x + 3); // allocate memory
+  return 2*t - 1/t;       // copy ? ref ?
+}
+\end{lstlisting}
+}
+
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstoperatorauto{%
+\begin{lstlisting}
+class product_expr
+{
+  public:
+  product_expr(const matrix& arg1, const matrix& arg2)
+  : arg1(arg1), arg2(arg2) {}
+
+  using auto= matrix;
+
+  private:
+  const matrix &arg1, &arg2;
+};
+\end{lstlisting}
+}
+
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstoperatorautouse{%
+\begin{lstlisting}
+matrix a,b;
+
+// store a matrix
+auto z = a*b;
+
+// store a product_expr
+explicit auto w = a*b;
+\end{lstlisting}
+}
+
+\lstset{basicstyle=\tiny\ttfamily,frame=none,aboveskip=0bp,breaklines=true,belowskip=0bp,language=c++,showspaces=false, showstringspaces=false}\defverbatim[colored]\lstfragment{%
+\begin{lstlisting}
+let a = .<(1 + 2)>.;;
+  -> val a : int code = .<(1 + 2)>.
+  
+let b = .< 3. * .~a>.;;
+  -> val b : double code = .<3. * (1 + 2)>.
+  
+let c = .!b;;
+  -> val c : double
+\end{lstlisting}
+}

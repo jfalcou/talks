@@ -1,0 +1,175 @@
+\documentclass{beamer}
+\usetheme[pageofpages=of,
+          titleline=true,
+          alternativetitlepage=true,
+          titlepagelogo=logo,
+          ]{Torino}
+\usecolortheme{metascale}
+\usepackage{listings}
+\ifxetex
+  \usepackage{fontspec}
+  \defaultfontfeatures{Mapping=tex-text}
+  \setsansfont[ItalicFont={GillSansMTPro-BookItalic}]{GillSansMTPro-Book}
+  \setmonofont{Inconsolata}
+  \newcommand{\codefont}{\ttfamily}
+\else
+  \usepackage[utf8x]{inputenc}
+  \usepackage[nott]{inconsolata}
+  \newcommand{\codefont}{\fontfamily{fi4}\selectfont}
+\fi
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{algorithm2e}
+\usepackage[noend]{algorithmic}
+\usepackage{listings}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{rotating}
+\usepackage[english]{babel}
+\usepackage{pgfplots}
+\usepackage{standalone}
+
+
+%
+% magic to highlight code in listings
+%
+\makeatletter
+\newenvironment{btHighlight}[1][]
+{\begingroup\tikzset{bt@Highlight@par/.style={#1}}\begin{lrbox}{\@tempboxa}}
+{\end{lrbox}\bt@HL@box[bt@Highlight@par]{\@tempboxa}\endgroup}
+
+\newcommand\btHL[1][]{%
+  \begin{btHighlight}[#1]\bgroup\aftergroup\bt@HL@endenv%
+}
+\def\bt@HL@endenv{%
+  \end{btHighlight}%   
+  \egroup
+}
+\newcommand{\bt@HL@box}[2][]{%
+  \tikz[#1]{%
+    \pgfpathrectangle{\pgfpoint{1pt}{0pt}}{\pgfpoint{\wd #2}{\ht #2}}%
+    \pgfusepath{use as bounding box}%
+    \node[anchor=base west, fill=orange!30,outer sep=0pt,inner xsep=1pt, inner ysep=0pt, rounded corners=3pt, minimum height=\ht\strutbox+1pt,#1]{\raisebox{1pt}{\strut}\strut\usebox{#2}};
+  }%
+}
+\makeatother
+
+%
+% define colors for code
+%
+\definecolor{lightblue}{RGB}{0,125,197}
+\definecolor{darkblue}{RGB}{0, 72, 113}
+\definecolor{lightgreen}{RGB}{128, 255, 128}
+\definecolor{darkgreen}{RGB}{0, 255, 0}
+\definecolor{lightred}{RGB}{255, 128, 128}
+\definecolor{darkred}{RGB}{255, 0, 0}
+\definecolor{CodeBlue} {rgb}{0.0,0.0,0.5}
+\definecolor{CodeGreen}{rgb}{0.0,0.5,0.0}
+
+\lstdefinelanguage{sierra}
+{
+    morecomment = [s]{/*}{*/},
+    morecomment = [l]{//},
+    sensitive = true,
+    morekeywords = {define},
+    morekeywords = {uniform,varying,simd,scalar,for_each_active,for_each_unique,current_mask},
+    morekeywords = {typename,uint32_t,uint64_t,nullptr,return,public,protected,private,template,auto,class,virtual,struct,union,void,this,size_t,volatile,if,else,do,while,case,goto,switch,for,while,bool,typedef,static,const,float,int,short,char,double,break,continue},
+    moredelim=**[is][\only<+>{\btHL}]{`}{`},
+    moredelim=**[is][\only<+>{\btHL[fill=green!30,draw=red,dashed,thin]}]{@}{@},
+}
+
+\lstset{
+    %breaklines=true,
+    columns=fixed,
+    basicstyle=\tt\scriptsize,
+    %basicstyle=\tt\footnotesize,
+    keywordstyle=\color{CodeBlue}\bfseries,
+    commentstyle=\color{CodeGreen}\itshape,
+    language=C++,
+    keepspaces,
+    moredelim=**[is][\only<+>{\btHL}]{`}{`},
+    moredelim=**[is][\only<+>{\btHL[fill=green!30,draw=red,dashed,thin]}]{@}{@},
+}
+
+\usepackage{tikz}
+
+% setup tikz
+\usetikzlibrary{calc,shadows,snakes,arrows,shapes,matrix,chains,positioning}
+\def\print#1{\pgfmathparse{#1}\pgfmathresult}
+\def\colx{Blue!40}
+\def\coly{Blue!20}
+\def\colz{white}
+
+\lstnewenvironment{sierra}
+{ \lstset{language=sierra} }
+{}
+
+
+
+\institute{LRI}
+
+\subject{Computer Science}
+\logo{\includegraphics[trim=0 0 0 -50,height=0.5cm]{logo}}
+
+\providecommand{\cpp}[1][~]{\textsc{C++}#1}
+\providecommand{\template}[1][~]{\textsc{template}#1}
+\providecommand{\ie}[1][~]{\textit{i.e.}#1}
+\providecommand{\eg}[1][~]{\textit{e.g.#1}}
+\providecommand{\ntd}[1][~]{NT$^2$#1}
+\providecommand{\matlab}[1][~]{\textsc{Matlab}#1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title[CppCon15]{Expression Templates - Past,Present,Future}
+
+\author[J.~Falcou]{Joel Falcou}
+
+\institute{NumScale -- LRI}
+
+\date{CppCon 2015}
+
+\begin{document}
+\input{slidelst}
+\input{slideimages}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+\selectlanguage{english}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\include{introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{General Principles}
+\include{basic}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Boost.Proto}
+\include{proto}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Post-modern E.Ts}
+\include{next}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+\include{conclusion}
+
+\frame[plain]
+{
+\begin{center}\Huge Thanks for your attention\end{center}
+}
+
+\end{document}

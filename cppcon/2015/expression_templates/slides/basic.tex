@@ -1,0 +1,112 @@
+\frame[plain]
+{
+\begin{center}
+\Huge Basic Principles\\
+\huge or how does it work anyway ?
+\end{center}
+}
+
+\begin{frame}
+\frametitle{A joint discovery}
+\begin{block}{Todd Veldhuizen, 1994}
+\begin{itemize}
+\item Intern at RogueWave Oregon
+\item ``Discover'' Expression Templates while optimizing image processing
+\item Technical report \& C++ Report article in 94-95
+\end{itemize}
+\end{block}{}
+
+\begin{block}{David Vandevoorde, 1995}
+\begin{itemize}
+\item Independant discovery 
+\item Work or a \texttt{valarray} implementation
+\item Idea spread through the ``Computers in Physics'' journal in 96
+\end{itemize}
+\end{block}{}
+\end{frame}
+
+\begin{frame}
+\frametitle{The original question}
+\begin{center}\pgfuseimage{original}\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{The original answer}
+\begin{center}\pgfuseimage{answer}\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{A Compiler's Perspective}
+\only<1>{\begin{center}\pgfuseimage{expression}\end{center}}
+\only<2>{\begin{center}\pgfuseimage{derivation}\end{center}}
+\end{frame}
+
+\begin{frame}
+\frametitle{A Compiler's Perspective}
+\begin{center}\pgfuseimage{ast}\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{From AST to C++}
+\begin{block}{Storing expressions}
+\begin{itemize}
+\item Need to store the \alert{operator}
+\item Need to store the \alert{sub-expressions}
+\item Need to traverse them to perform work
+\end{itemize}
+\end{block}{}
+
+\begin{block}{Capturing expressions}
+\begin{itemize}
+\item Operators and functions are overloaded
+\item They don't compute anything
+\item They return a \alert{representation} of the local AST
+\end{itemize}
+\end{block}{}
+\end{frame}
+
+\begin{frame}
+\frametitle{From AST to C++ - \texttt{expr}}
+\only<1>{\lstunary}
+\only<2>{\lstbinary}
+\end{frame}
+
+\begin{frame}
+\frametitle{From AST to C++ - \texttt{terminal}}
+\lstterminal
+\end{frame}
+
+\begin{frame}
+\frametitle{Duct-taping everything together}
+\begin{block}{Issues}
+\begin{itemize}
+\item How to write operators so they work with expressions ?
+\item Where to put them so they are found correctly ?
+\item How to extent this whole mess sanely ?
+\end{itemize}
+\end{block}{}
+
+\only<2->
+{
+\begin{center}
+Use the \alert{Curiously Recursive Template Pattern} Luke !
+\end{center}
+}
+\end{frame}
+
+\begin{frame}
+\frametitle{Flashback on the CRTP}
+\lstcrtp
+\end{frame}
+
+\begin{frame}
+\frametitle{From AST to C++ - \texttt{base\_expr}}
+\lstcrtpexpr
+\end{frame}
+
+\begin{frame}
+\frametitle{From AST to C++ - Operators definition}
+\lstcrtpop
+\end{frame}
+
+%%% coding session

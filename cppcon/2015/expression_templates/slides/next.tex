@@ -1,0 +1,76 @@
+\frame[plain]
+{
+\begin{center}
+\Huge Next Level Expressions Templates\\
+\huge \texttt{operator auto()}, \texttt{lambdas}, oh my !
+\end{center}
+}
+
+\begin{frame}
+\frametitle{Expression Templates in C++11/14}
+\begin{block}{Is it still worth it ?}
+\begin{itemize}
+\item E.T are primarily seen as performance tools
+\item But: move semantic, copy elision why bother ?
+\item Are E.T an outdated technology ?
+\end{itemize}
+\end{block}{}
+
+\begin{block}{Answers}
+\begin{itemize}
+\item E.T in modern C++ make libraries more intentionnal
+\item E.T based library extract informations compilers can't
+\item Optimizations opportunities arise at algorithmic level
+\item \alert{E.T are a way to perform domain specific optimizations}
+\end{itemize}
+\end{block}{}
+\end{frame}
+
+\begin{frame}
+\frametitle{\texttt{auto} and Expression templates}
+\begin{block}{The N4035 proposal}
+\begin{itemize}
+\item Provides \texttt{operator auto()}
+\item Changes the semantic of auto for UD types
+\item Old auto still applicable
+\item Applicable to E.T and all proxy types
+\end{itemize}
+\end{block}{}
+
+\only<1>{\lstoperatorauto}
+\only<2>{\lstoperatorautouse}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{The shiki library}
+\begin{block}{What is Shiki ?}
+\begin{itemize}
+\item Boost.Hana inspired C++14 E.T engine
+\item Idiomatic rewrite of something close to Boost.Proto
+\item Rely on most C++14 features
+\end{itemize}
+\end{block}{}
+
+\begin{block}{Main assets}
+\begin{itemize}
+\item Designed to be easy to use, easy to develop
+\item Faster compile times by using symbol name compression
+\item Multiple entry level API
+\end{itemize}
+\end{block}{}
+\end{frame}
+
+\begin{frame}
+\frametitle{Let's go radical}
+\begin{block}{Which other languages do E.T ?}
+\begin{itemize}
+\item Template Haskell
+\item MetaOCaml
+\item Common points : code fragment as first class citizen
+\end{itemize}
+\end{block}{}
+
+\lstfragment
+
+\end{frame}

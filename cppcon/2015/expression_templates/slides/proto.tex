@@ -1,0 +1,189 @@
+\frame[plain]
+{
+\begin{center}
+\Huge From CRTP to Boost.Proto\\
+\huge or modern C++ design's lovely head
+\end{center}
+}
+
+\begin{frame}
+\frametitle{Why Boost.Proto ?}
+\begin{block}{Manual ET are limiting}
+\begin{itemize}
+\item Too much boilerplate
+\item Data and traversal are tied together
+\item Not easy to wrok with other similar code
+\end{itemize}
+\end{block}{}
+
+\begin{block}{Solutions}
+\begin{itemize}
+\item Find a generic interface for E.Ts
+\item Come closer to usual compiler techniques
+\item Solve the extensions problem
+\end{itemize}
+\end{block}{}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{The Rise of DSELs}
+\begin{block}{What are DSLs ?}
+\begin{itemize}
+\item DSL = declarative, non-turing complete language
+\item Solve one problem but solve it right
+\item Usually interpreted or compiled externally
+\end{itemize}
+\end{block}{}
+
+\begin{block}{What are DSELs ?}
+\begin{itemize}
+\item Library designed as a DSLs
+\item Compiled by the regular compiler
+\item Expressions Templates are a way to define DSELs
+\end{itemize}
+\end{block}{}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Boost.Proto}
+\begin{block}{A Expression Template Toolkit}
+\begin{itemize}
+\item Generalize E.T implementation strategy
+\item Decorrelate tree construction from traversal
+\item Support arbitrary extensions
+\end{itemize}
+\end{block}{}
+
+\begin{block}{A DSEL Compiler Toolkit}
+\begin{itemize}
+\item Notion of \alert{Grammar}
+\item Notion of \alert{Semantic Actions}
+\item Interoperability between DSELs
+\end{itemize}
+\end{block}{}
+\end{frame}
+
+\begin{frame}
+\frametitle{Tree Generation}
+\only<1>{\lstprotoa}
+\only<2>{\lstprotoaout}
+\end{frame}
+
+\begin{frame}
+\frametitle{Tree Validation}
+\lstprotomatch
+\end{frame}
+
+\begin{frame}
+\frametitle{Tree Transform}
+\lstprotoeval
+\end{frame}
+
+\begin{frame}
+\frametitle{Tree Custom Transform}
+\lstprotoevalcustom
+\end{frame}
+
+\begin{frame}
+\frametitle{Semantic Wrapping}
+\begin{block}{From tree to expression}
+\begin{itemize}
+\item Proto tree are semantic-less
+\item Semantic comes from the DSEL specs
+\item Proto Domain ties Semantic to Tree
+\end{itemize}
+\end{block}{}
+
+\begin{block}{Basic outline}
+\begin{itemize}
+\item Defines a wrapper with desired semantic
+\item Proto domain wrap tree into this type
+\item Proto operators keep domain informations around
+\end{itemize}
+\end{block}{}
+\end{frame}
+
+%%% FRESH MEAT WITH DERIVATIVES
+
+{
+\setbeamercolor{background canvas}{bg=black}
+\frame[plain]
+{
+\begin{center}\pgfuseimage{traps}\end{center}
+}
+}
+
+\begin{frame}
+\frametitle{Automatic type deduction}
+\begin{block}{Problem statement}
+\begin{itemize}
+\item \texttt{auto} captures the tree no the value type
+\item Generic code issues: \texttt{T} is not what you think it is
+\item Performance issues: redundant evaluation
+\end{itemize}
+\end{block}{}
+\only<1>
+{
+\lstautoissue
+}
+
+\only<2>
+{
+\lstgenericissue
+}
+
+\only<3>
+{
+\lstmultieval
+}
+
+\only<4>
+{
+\begin{block}{Solutions}
+\begin{itemize}
+\item Manual evaluation requests
+\item Viral application of \texttt{auto}
+\item Library-side fix, e.g \texttt{terminal\_of}
+\item Proposal N4035 (see later)
+\end{itemize}
+\end{block}{}
+}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{The Sub-expression issue}
+\begin{block}{Problem Statement}
+\begin{itemize}
+\item Optimization of expression storage by reference
+\item Function returning expression referencing local data
+\item Potential dandling reference to temporary data
+\end{itemize}
+\end{block}{}
+
+\lstdang
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Compilation time}
+\begin{block}{Problem Statement}
+\begin{itemize}
+\item Small scale DSELs compiles somehow fast
+\item Longer expression = longer compiles time
+\item 1st source : symbol names
+\item 2nd source : transform complexity
+\end{itemize}
+\end{block}{}
+
+\begin{block}{Solutions}
+\begin{itemize}
+\item K.I.S.S
+\item Language support for expression capture ?
+\item C++14 Lambdas (see Shiki later)
+\end{itemize}
+\end{block}{}
+\end{frame}
+
